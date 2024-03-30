@@ -1,0 +1,11 @@
+matplotlib==3.8.0
+pandas==2.1.0
+opencv-python==4.8.1.78
+prophet==1.1.5
+mediapipe==0.10.5
+statsmodels==0.14.0
+pykalman==0.9.5
+darts==0.27.0
+numpy==1.25.2
+filterpy~=1.4.4
+scipy~=1.11.3
