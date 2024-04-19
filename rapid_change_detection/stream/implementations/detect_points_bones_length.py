@@ -1,15 +1,25 @@
 import math
+import numpy as np
 
 
 class DetectPointsByBoneLength:
-    def __init__(self, edges, num_of_frames_to_compute_from, exclude_edges) -> None:
+    def __init__(
+        self,
+        edges,
+        num_of_frames_to_compute_from=5,
+        exclude_edges=set(),
+        coef_max_change=0.2,
+    ) -> None:
         self.edges_to_compute = edges - exclude_edges
         self.num_of_frames_to_compute_from = num_of_frames_to_compute_from
         self.number_of_computed = 0
+        self.coef_max_change = coef_max_change
         self.avgs = {}
+        self.tresholds = {}
+        self.first_n = {edge: [] for edge in self.edges_to_compute}
 
-    def detect_points_for_frame(self, frame):
-        result = {}
+    def check_frame(self, frame):
+        result = set()
         for edge in self.edges_to_compute:
             first, second = edge[0], edge[1]
             x_1 = frame[first][0]
@@ -27,14 +37,15 @@ class DetectPointsByBoneLength:
             res = math.sqrt(x + y + z)
 
             if self.number_of_computed < self.num_of_frames_to_compute_from:
-                self.avgs[edge] = self.avgs.get(edge, 0) + res
+                self.first_n[edge].append(res)
             elif self.number_of_computed == self.num_of_frames_to_compute_from:
-                self.avgs[edge] /= self.num_of_frames_to_compute_from
-                self.tresholds[edge] = self.avgs[edge]
+                self.avgs[edge] = np.median(self.first_n[edge])
+                self.tresholds[edge] = self.avgs[edge] * self.coef_max_change
             if (
                 self.number_of_computed >= self.num_of_frames_to_compute_from
                 and abs(self.avgs[edge] - res) > self.tresholds[edge]
             ):
                 result.add(first)
                 result.add(second)
+        self.number_of_computed += 1
         return result
