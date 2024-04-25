@@ -1,5 +1,7 @@
 import numpy as np
-from jitter_smoothing_interface import JitterSmoothingInterface
+
+from exceptions.not_valid_dimensionality_exception import NotValidDimensionalityException
+from ..interfaces.jitter_smoothing_interface import JitterSmoothingInterface
 
 
 class DoubleExponentialSmoothingStream(JitterSmoothingInterface):
@@ -12,6 +14,8 @@ class DoubleExponentialSmoothingStream(JitterSmoothingInterface):
         self.beta = beta
 
     def smooth_frame(self, frame):
+        if len(frame.shape) != 2:
+            raise NotValidDimensionalityException("frame", 2)
         new_level_component = self.alpha * frame + (1 - self.alpha) * (
             self.level_component - self.trend_component
         )

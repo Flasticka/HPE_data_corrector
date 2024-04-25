@@ -1,10 +1,12 @@
 from filterpy.kalman import KalmanFilter
 import numpy as np
-from jitter_smoothing_interface import JitterSmoothingInterface
+
+from exceptions.not_valid_dimensionality_exception import NotValidDimensionalityException
+from ..interfaces.jitter_smoothing_interface import JitterSmoothingInterface
 
 
 class KalmanFilterStream(JitterSmoothingInterface):
-    def __init__(self, initial_frame, covariance_coefficient=0.05):
+    def __init__(self, initial_frame, q=0.05, r=1):
         self.result = initial_frame
         self.kf_states = []
         for i in range(initial_frame.shape[0]):
@@ -27,7 +29,8 @@ class KalmanFilterStream(JitterSmoothingInterface):
                 ]
             )
             f.H = np.eye(3, 9)
-            f.Q = covariance_coefficient * np.eye(9)
+            f.Q = q * np.eye(9)
+            f.R = r * np.eye(3)
             self.kf_states.append(f)
 
     def smooth_frame(self, frame):
@@ -42,7 +45,7 @@ class KalmanFilterStream(JitterSmoothingInterface):
 
 
 class KalmanFilterStream2D:
-    def __init__(self, initial_frame, covariance_coefficient=0.05):
+    def __init__(self, initial_frame, q=0.05, r=1):
         self.result = initial_frame
         self.kf_states = []
         for i in range(initial_frame.shape[0]):
@@ -62,7 +65,9 @@ class KalmanFilterStream2D:
                 ]
             )
             f.H = np.eye(2, 6)
-            f.Q = covariance_coefficient * np.eye(6)
+            f.Q = q * np.eye(6)
+            f.R = r * np.eye(2)
+
             self.kf_states.append(f)
 
     def smooth_frame(self, frame):
@@ -76,8 +81,9 @@ class KalmanFilterStream2D:
         return np.array(self.result)
 
 
-def get_kalman(initial_frame, covariance_coefficient=0.05):
+def get_kalman(initial_frame, q=0.05, r=1):
     if initial_frame.shape[1] == 2:
-        return KalmanFilterStream2D(initial_frame, covariance_coefficient)
+        return KalmanFilterStream2D(initial_frame, q, r)
     if initial_frame.shape[1] == 3:
-        return KalmanFilterStream(initial_frame, covariance_coefficient)
+        return KalmanFilterStream(initial_frame, q, r)
+    raise NotValidDimensionalityException("initial_frame.shape[1] (cords dimensionality)", "2 or 3")

@@ -1,5 +1,7 @@
 import numpy as np
-from jitter_smoothing_interface import JitterSmoothingInterface
+
+from exceptions.not_valid_dimensionality_exception import NotValidDimensionalityException
+from ..interfaces.jitter_smoothing_interface import JitterSmoothingInterface
 
 
 class SingleExponentialSmoothingStream(JitterSmoothingInterface):
@@ -9,6 +11,8 @@ class SingleExponentialSmoothingStream(JitterSmoothingInterface):
         self.alpha = alpha
 
     def smooth_frame(self, frame):
+        if len(frame.shape) != 2:
+            raise NotValidDimensionalityException("frame", 2)
         self.current_state = self.alpha * frame + (1 - self.alpha) * self.current_state
 
     def get_last_smoothed_frame(self):
