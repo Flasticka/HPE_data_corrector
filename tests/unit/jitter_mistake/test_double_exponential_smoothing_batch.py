@@ -1,9 +1,7 @@
 import unittest
 import numpy as np
 
-from exceptions.not_valid_dimensionality_exception import (
-    NotValidDimensionalityException,
-)
+
 from jitter_smoothing.batch.double_exponentional_smoothing import (
     _exponential_smoothing,
     smooth,
@@ -95,14 +93,3 @@ class TestSmooth(unittest.TestCase):
         )
         result = smooth(motion_data, alpha=0.4, beta=0.1)
         np.testing.assert_array_almost_equal(result, expected_result, decimal=3)
-
-    def test_smooth_no_frame_raise_exception(self):
-        motion_data = np.array([])
-
-        try:
-            smooth(motion_data, alpha=0.4, beta=0.1)
-        except NotValidDimensionalityException as err:
-            self.assertEqual(
-                "Invalid dimensionality of variable 'motion_data', expected dimensionality 3.",
-                str(err),
-            )

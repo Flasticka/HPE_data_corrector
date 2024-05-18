@@ -3,7 +3,7 @@ from ..interfaces.rapid_change_detection_interface import RapidChangeDetectionIn
 
 
 class DetectPointsBySingle(RapidChangeDetectionInterface):
-    def __init__(self, initial_frame, alpha=0.6, threshold=0.4, max_num_to_compute=5):
+    def __init__(self, initial_frame, alpha=0.2, threshold=0.75, max_num_to_compute=5):
         self.threshold = threshold
         self.max_num_to_compute = max_num_to_compute
         self.num_of_detected = [0] * initial_frame.shape[0]
@@ -22,10 +22,8 @@ class DetectPointsBySingle(RapidChangeDetectionInterface):
                 for j in range(self.current_state.shape[1])
             ]
 
-            if (
-                    abs(np.array(predicted)[:2] - np.array(frame[i])[:2]) > self.threshold
-            ).any() or (
-                    len(frame[i]) == 3 and abs(predicted[2] - frame[i][2]) > self.threshold
+            if (abs(predicted - frame[i]) > self.threshold).any() or np.isnan(
+                np.sum(frame[i])
             ):
                 result.add(i)
                 self.num_of_detected[i] += 1

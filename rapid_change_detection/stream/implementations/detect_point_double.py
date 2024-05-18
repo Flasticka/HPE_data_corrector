@@ -4,7 +4,7 @@ from ..interfaces.rapid_change_detection_interface import RapidChangeDetectionIn
 
 class DetectPointsByDouble(RapidChangeDetectionInterface):
     def __init__(
-            self, initial_frame, alpha=0.6, beta=0.1, threshold=0.4, max_num_to_compute=5
+        self, initial_frame, alpha=0.2, beta=0.1, threshold=0.75, max_num_to_compute=5
     ) -> None:
         self.threshold = threshold
         self.max_num_to_compute = max_num_to_compute
@@ -27,18 +27,17 @@ class DetectPointsByDouble(RapidChangeDetectionInterface):
             curr_joint_trend_component = []
             for j in range(self.level_component.shape[1]):
                 curr_level_component = self.alpha * frame[i][j] + (1 - self.alpha) * (
-                        self.level_component[i][j] - self.trend_component[i][j]
+                    self.level_component[i][j] - self.trend_component[i][j]
                 )
                 curr_trend_component = (
-                        self.beta * (curr_level_component - self.level_component[i][j])
-                        + (1 - self.beta) * self.trend_component[i][j]
+                    self.beta * (curr_level_component - self.level_component[i][j])
+                    + (1 - self.beta) * self.trend_component[i][j]
                 )
                 new_state[i][j] = curr_level_component + curr_trend_component
                 curr_joint_level_component.append(curr_level_component)
                 curr_joint_trend_component.append(curr_trend_component)
-            if (abs(new_state[i][:2] - frame[i][:2]) > self.threshold).any() or (
-                    len(frame[i]) == 3
-                    and (abs(new_state[i][2] - frame[i][2]) > self.threshold)
+            if (abs(new_state[i] - frame[i]) > self.threshold).any() or np.isnan(
+                np.sum(frame[i])
             ):
                 result.add(i)
                 self.num_of_detected[i] += 1

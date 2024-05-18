@@ -1,7 +1,6 @@
 import unittest
 import numpy as np
 
-from exceptions.not_valid_dimensionality_exception import NotValidDimensionalityException
 from jitter_smoothing.stream.implementations.kalman_filter import get_kalman
 
 
@@ -29,33 +28,13 @@ class TestKalmanFilterStream(unittest.TestCase):
             np.testing.assert_array_almost_equal(result, expected_result[i], decimal=3)
 
     def test_smooth_two_frame2D_return_ok(self):
-        motion_data = np.array(
-            [
-                [[2, 3], [5, 6]],
-                [[3, 4], [6, 7]]
-            ]
-        )
+        motion_data = np.array([[[2, 3], [5, 6]], [[3, 4], [6, 7]]])
 
         expected_result = np.array(
-            [
-                [[1.6970, 2.6970], [4.6970, 5.6970]],
-                [[2.8512, 3.8512], [5.8512, 6.8512]]
-            ]
+            [[[1.6970, 2.6970], [4.6970, 5.6970]], [[2.8512, 3.8512], [5.8512, 6.8512]]]
         )
         kalman_filter = get_kalman(np.array([[1, 2], [4, 5]]), q=0.05, r=1)
         for i, frame in enumerate(motion_data):
             kalman_filter.smooth_frame(frame)
             result = kalman_filter.get_last_smoothed_frame()
             np.testing.assert_array_almost_equal(result, expected_result[i], decimal=3)
-
-    def test_smooth_no_frame_raise_exception(self):
-        frame = np.array([])
-        kalman_filter = get_kalman(np.array([[1, 2, 3]]))
-
-        try:
-            kalman_filter.smooth_frame(frame)
-        except NotValidDimensionalityException as err:
-            self.assertEqual(
-                "Invalid dimensionality of variable 'frame', expected dimensionality 2.",
-                str(err),
-            )

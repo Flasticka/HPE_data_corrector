@@ -1,13 +1,16 @@
 import unittest
 import numpy as np
 
-from exceptions.not_valid_dimensionality_exception import NotValidDimensionalityException
-from jitter_smoothing.stream.implementations.double_exponentional_smoothing import DoubleExponentialSmoothingStream
+from jitter_smoothing.stream.implementations.double_exponentional_smoothing import (
+    DoubleExponentialSmoothingStream,
+)
 
 
 class TestDoubleExponentialSmoothingStream(unittest.TestCase):
     def test_smooth_normal_case_returns_ok(self):
-        double_exponential = DoubleExponentialSmoothingStream(np.array([[1, 2, 3], [4, 5, 6]]), alpha=0.4, beta=0.1)
+        double_exponential = DoubleExponentialSmoothingStream(
+            np.array([[1, 2, 3], [4, 5, 6]]), alpha=0.4, beta=0.1
+        )
         motion_data = np.array(
             [
                 [[1, 2, 3], [4, 5, 6]],
@@ -32,15 +35,3 @@ class TestDoubleExponentialSmoothingStream(unittest.TestCase):
             double_exponential.smooth_frame(frame)
             result = double_exponential.get_last_smoothed_frame()
             np.testing.assert_array_almost_equal(result, expected_result[i], decimal=3)
-
-    def test_smooth_no_frame_raise_exception(self):
-        frame = np.array([])
-        double_exponential = DoubleExponentialSmoothingStream(np.array([[1, 2, 3]]), alpha=0.4, beta=0.1)
-
-        try:
-            double_exponential.smooth_frame(frame)
-        except NotValidDimensionalityException as err:
-            self.assertEqual(
-                "Invalid dimensionality of variable 'frame', expected dimensionality 2.",
-                str(err),
-            )

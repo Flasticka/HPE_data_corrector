@@ -1,5 +1,5 @@
 class MediaPipe:
-    EDGES = [
+    EDGES = {
         (0, 4),
         (0, 1),
         (1, 2),
@@ -34,5 +34,5 @@ class MediaPipe:
         (28, 30),
         (29, 31),
         (30, 32),
-    ]
-    NUM_OF_JOINTS=33
+    }
+    NUM_OF_JOINTS = 33

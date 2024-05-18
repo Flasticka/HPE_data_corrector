@@ -1,5 +1,5 @@
 class HDM05:
-    EDGES = [
+    EDGES = {
         (0, 1),
         (0, 6),
         (0, 11),
@@ -30,5 +30,5 @@ class HDM05:
         (27, 28),
         (27, 30),
         (28, 29),
-    ]
-    NUM_OF_JOINTS=30
+    }
+    NUM_OF_JOINTS = 31

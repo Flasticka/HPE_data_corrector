@@ -50,12 +50,12 @@ def initiate_kalman2D(observation, q, r):
 
 class DetectPointsByKalman(RapidChangeDetectionInterface):
     def __init__(
-            self,
-            initial_frame,
-            q=0.05,
-            r=0.05,
-            threshold=0.4,
-            max_num_to_compute=5,
+        self,
+        initial_frame,
+        q=0.05,
+        r=1,
+        threshold=0.75,
+        max_num_to_compute=5,
     ) -> None:
         self.threshold = threshold
         self.max_num_to_compute = max_num_to_compute
@@ -84,14 +84,13 @@ class DetectPointsByKalman(RapidChangeDetectionInterface):
             )
             frame_dim = frame[i][:2] if self.dimension == 2 else frame[i]
 
-            if (abs(predicted_dim - frame_dim) > self.threshold).any() or (
-                    len(frame[i]) == 3
-                    and abs(predicted_dim[2] - frame[i][2]) > self.threshold
+            if (abs(predicted_dim - frame_dim) > self.threshold).any() or np.isnan(
+                np.sum(frame_dim)
             ):
                 result.add(i)
                 self.num_of_detected[i] += 1
             else:
-                self.kf_states[i].update(frame[i])
+                self.kf_states[i].update(frame_dim)
                 self.num_of_detected[i] = 0
 
         return result

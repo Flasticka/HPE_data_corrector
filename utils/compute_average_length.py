@@ -1,4 +1,3 @@
-
 def compute_avg_err_length(data, num_frames, num_of_joints):
     data_formatted = set(map(lambda x: (x[0], x[1]), data))
     summ = 0

@@ -39,23 +39,21 @@ class _DoubleExponentialSmoothingStream:
         return np.array(self.post_predict_current_state)
 
 
-def detect_points(data, max_num_to_compute=5, alpha=0.6, beta=0.1, threshold=0.4):
-    num_of_frames = data.shape[1]
-    num_of_joints = data.shape[0]
-
+def detect_points(data, max_num_to_compute=5, alpha=0.2, beta=0.1, threshold=0.75):
+    num_of_frames = data.shape[0]
+    num_of_joints = data.shape[1]
+    data = np.transpose(data, (1, 0, 2))
     result = [set() for _ in range(num_of_joints)]
     for i, joint in enumerate(data):
         if not joint.any():
             continue
         num_of_detected = 0
         des = _DoubleExponentialSmoothingStream(joint[0], alpha, beta)
-        for j, frame in enumerate(joint[1:], 1):
+        for j, frame in enumerate(joint[1:], 2):
             des.predict_joint(frame)
             predicted = des.get_last_predicted_frame()
 
-            if (abs(predicted[:2] - frame[:2]) > threshold).any() or (
-                len(frame) == 3 and (abs(predicted[2] - frame[2]) > threshold)
-            ):
+            if (abs(predicted - frame) > threshold).any() or np.isnan(np.sum(frame)):
                 result[i].add(j)
                 num_of_detected += 1
             else:
