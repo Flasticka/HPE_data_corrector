@@ -15,7 +15,7 @@ def _exponential_smoothing(observations, alpha, beta):
             result[t] = level
             trend = 0
         else:
-            new_level = alpha * observations[t] + (1 - alpha) * (level - trend)
+            new_level = alpha * observations[t] + (1 - alpha) * (level + trend)
             trend = beta * (new_level - level) + (1 - beta) * trend
             result[t] = new_level + trend
             level = new_level

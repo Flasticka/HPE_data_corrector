@@ -18,7 +18,7 @@ class _DoubleExponentialSmoothingStream:
         new_trend_component = np.zeros_like(self.current_state)
         for j in range(len(self.current_state)):
             curr_level_component = self.alpha * frame[j] + (1 - self.alpha) * (
-                self.level_component[j] - self.trend_component[j]
+                self.level_component[j] + self.trend_component[j]
             )
             curr_trend_component = (
                 self.beta * (curr_level_component - self.level_component[j])

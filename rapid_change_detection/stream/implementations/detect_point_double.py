@@ -27,7 +27,7 @@ class DetectPointsByDouble(RapidChangeDetectionInterface):
             curr_joint_trend_component = []
             for j in range(self.level_component.shape[1]):
                 curr_level_component = self.alpha * frame[i][j] + (1 - self.alpha) * (
-                    self.level_component[i][j] - self.trend_component[i][j]
+                    self.level_component[i][j] + self.trend_component[i][j]
                 )
                 curr_trend_component = (
                     self.beta * (curr_level_component - self.level_component[i][j])

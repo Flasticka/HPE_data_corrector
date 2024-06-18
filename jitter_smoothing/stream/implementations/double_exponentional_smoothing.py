@@ -18,7 +18,7 @@ class DoubleExponentialSmoothingStream(JitterSmoothingInterface):
             self.trend_component = np.zeros(frame.shape)
         else:
             new_level_component = self.alpha * frame + (1 - self.alpha) * (
-                self.level_component - self.trend_component
+                self.level_component + self.trend_component
             )
             new_trend_component = (
                 self.beta * (new_level_component - self.level_component)
