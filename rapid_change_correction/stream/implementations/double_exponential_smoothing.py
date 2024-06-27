@@ -79,7 +79,7 @@ class DoubleExponentialSmoothingRepair(RapidChangeRepairStreamInterface):
                     if self.previous_when_missing:
                         result.append(observation.tolist())
                     else:
-                        result.append([None for _ in range(len(frame.shape[1]))])
+                        result.append([None for _ in range(frame.shape[1])])
             else:
                 self.num_of_computed[joint_num] = 0
                 self.update_stats(observation, joint_num, True)
